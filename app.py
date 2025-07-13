@@ -195,8 +195,16 @@ def update_profile(user_id):
     conn.close()
     return render_template('update.html', form=form, user=user)
 
+@app.route('/health')
+def health_check():
+    """Health check endpoint for deployment services"""
+    return {'status': 'healthy', 'message': 'Flask app is running'}, 200
+
 # Initialize database when application starts
-init_db()
+try:
+    init_db()
+except Exception as e:
+    print(f"Database initialization error: {e}")
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
