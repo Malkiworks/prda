@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+
+{% block title %}Update Profile - {{ user.first_name }} {{ user.last_name }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card">
+            <div class="profile-header">
+                <h2 class="mb-0">
+                    <i class="fas fa-edit"></i> Update Your Profile
+                </h2>
+                <p class="mb-0 mt-2">Keep your information up to date</p>
+            </div>
+            
+            <div class="card-body p-4">
+                <form method="POST" novalidate>
+                    {{ form.hidden_tag() }}
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.first_name.id }}" class="form-label">
+                                <i class="fas fa-user text-primary me-2"></i>First Name *
+                            </label>
+                            {{ form.first_name(class="form-control" + (" is-invalid" if form.first_name.errors else "")) }}
+                            {% if form.first_name.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.first_name.errors %}
+                                        <i class="fas fa-exclamation-circle"></i> {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.last_name.id }}" class="form-label">
+                                <i class="fas fa-user text-primary me-2"></i>Last Name *
+                            </label>
+                            {{ form.last_name(class="form-control" + (" is-invalid" if form.last_name.errors else "")) }}
+                            {% if form.last_name.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.last_name.errors %}
+                                        <i class="fas fa-exclamation-circle"></i> {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.email.id }}" class="form-label">
+                            <i class="fas fa-envelope text-primary me-2"></i>Email Address *
+                        </label>
+                        {{ form.email(class="form-control" + (" is-invalid" if form.email.errors else "")) }}
+                        {% if form.email.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.email.errors %}
+                                    <i class="fas fa-exclamation-circle"></i> {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        <div class="form-text">
+                            <i class="fas fa-info-circle"></i> We'll never share your email with anyone else.
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.age.id }}" class="form-label">
+                            <i class="fas fa-birthday-cake text-primary me-2"></i>Age *
+                        </label>
+                        {{ form.age(class="form-control" + (" is-invalid" if form.age.errors else "")) }}
+                        {% if form.age.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.age.errors %}
+                                    <i class="fas fa-exclamation-circle"></i> {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="{{ form.bio.id }}" class="form-label">
+                            <i class="fas fa-info-circle text-primary me-2"></i>Bio (Optional)
+                        </label>
+                        {{ form.bio(class="form-control" + (" is-invalid" if form.bio.errors else ""), rows="4", placeholder="Tell us a bit about yourself...") }}
+                        {% if form.bio.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.bio.errors %}
+                                    <i class="fas fa-exclamation-circle"></i> {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        <div class="form-text">
+                            <i class="fas fa-info-circle"></i> Maximum 500 characters
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                        {{ form.submit(class="btn btn-primary btn-lg me-md-2") }}
+                        <a href="{{ url_for('profile', user_id=user.id) }}" class="btn btn-outline-secondary btn-lg">
+                            <i class="fas fa-times"></i> Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Current Profile Preview -->
+        <div class="card mt-4">
+            <div class="card-header">
+                <h6 class="mb-0">
+                    <i class="fas fa-eye text-primary"></i> Current Profile Preview
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <small class="text-muted">Current Name:</small>
+                        <p class="mb-2"><strong>{{ user.first_name }} {{ user.last_name }}</strong></p>
+                        
+                        <small class="text-muted">Current Email:</small>
+                        <p class="mb-2"><strong>{{ user.email }}</strong></p>
+                    </div>
+                    <div class="col-md-6">
+                        <small class="text-muted">Current Age:</small>
+                        <p class="mb-2"><strong>{{ user.age }} years old</strong></p>
+                        
+                        <small class="text-muted">Profile Created:</small>
+                        <p class="mb-2"><strong>{{ user.created_at.split(' ')[0] if user.created_at else 'Recently' }}</strong></p>
+                    </div>
+                </div>
+                
+                {% if user.bio %}
+                <div class="mt-3">
+                    <small class="text-muted">Current Bio:</small>
+                    <div class="bg-light p-2 rounded mt-1">
+                        <small>{{ user.bio }}</small>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="text-center mt-4">
+            <small class="text-muted">
+                <i class="fas fa-shield-alt"></i> Your information is secure and will never be shared.
+            </small>
+        </div>
+    </div>
+</div>
+
+<!-- Form validation help -->
+<div class="row justify-content-center mt-4">
+    <div class="col-md-8 col-lg-6">
+        <div class="card bg-light">
+            <div class="card-body">
+                <h6 class="card-title">
+                    <i class="fas fa-lightbulb text-warning"></i> Update Guidelines
+                </h6>
+                <ul class="list-unstyled mb-0 small">
+                    <li><i class="fas fa-check text-success me-2"></i> First and last names must be 2-50 characters</li>
+                    <li><i class="fas fa-check text-success me-2"></i> Email must be a valid email address</li>
+                    <li><i class="fas fa-check text-success me-2"></i> Age must be between 13 and 120 years</li>
+                    <li><i class="fas fa-check text-success me-2"></i> Bio is optional but limited to 500 characters</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

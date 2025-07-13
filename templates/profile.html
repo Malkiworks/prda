@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+
+{% block title %}{{ user.first_name }} {{ user.last_name }} - Profile{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card">
+            <div class="profile-header">
+                <div class="d-flex align-items-center justify-content-center mb-3">
+                    <div class="bg-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 80px; height: 80px;">
+                        <i class="fas fa-user text-primary" style="font-size: 2rem;"></i>
+                    </div>
+                </div>
+                <h2 class="mb-0">{{ user.first_name }} {{ user.last_name }}</h2>
+                <p class="mb-0 mt-2">
+                    <i class="fas fa-calendar"></i> 
+                    Member since {{ user.created_at.split(' ')[0] if user.created_at else 'Recently' }}
+                </p>
+            </div>
+            
+            <div class="card-body p-4">
+                <div class="row">
+                    <div class="col-12 mb-4">
+                        <h5 class="border-bottom pb-2 mb-3">
+                            <i class="fas fa-info-circle text-primary"></i> Personal Information
+                        </h5>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-user text-primary me-3" style="width: 20px;"></i>
+                                    <div>
+                                        <small class="text-muted d-block">Full Name</small>
+                                        <strong>{{ user.first_name }} {{ user.last_name }}</strong>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-envelope text-primary me-3" style="width: 20px;"></i>
+                                    <div>
+                                        <small class="text-muted d-block">Email</small>
+                                        <strong>{{ user.email }}</strong>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-birthday-cake text-primary me-3" style="width: 20px;"></i>
+                                    <div>
+                                        <small class="text-muted d-block">Age</small>
+                                        <strong>{{ user.age }} years old</strong>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-clock text-primary me-3" style="width: 20px;"></i>
+                                    <div>
+                                        <small class="text-muted d-block">Last Updated</small>
+                                        <strong>{{ user.updated_at.split(' ')[0] if user.updated_at else 'Never' }}</strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {% if user.bio %}
+                    <div class="col-12 mb-4">
+                        <h5 class="border-bottom pb-2 mb-3">
+                            <i class="fas fa-quote-left text-primary"></i> About Me
+                        </h5>
+                        <div class="bg-light p-3 rounded">
+                            <p class="mb-0">{{ user.bio }}</p>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="col-12">
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                            <a href="{{ url_for('update_profile', user_id=user.id) }}" class="btn btn-primary">
+                                <i class="fas fa-edit"></i> Edit Profile
+                            </a>
+                            <a href="{{ url_for('index') }}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left"></i> Back to Home
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Profile Stats Card -->
+        <div class="card mt-4">
+            <div class="card-body">
+                <h6 class="card-title">
+                    <i class="fas fa-chart-line text-primary"></i> Profile Statistics
+                </h6>
+                <div class="row text-center">
+                    <div class="col-4">
+                        <div class="p-2">
+                            <h5 class="text-primary mb-0">{{ user.id }}</h5>
+                            <small class="text-muted">User ID</small>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="p-2">
+                            <h5 class="text-success mb-0">{{ user.bio|length if user.bio else 0 }}</h5>
+                            <small class="text-muted">Bio Length</small>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="p-2">
+                            <h5 class="text-info mb-0">{{ user.email.split('@')[0]|length }}</h5>
+                            <small class="text-muted">Username Length</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Profile Completion -->
+        <div class="card mt-4">
+            <div class="card-body">
+                <h6 class="card-title">
+                    <i class="fas fa-tasks text-primary"></i> Profile Completion
+                </h6>
+                {% set completion = (
+                    (1 if user.first_name else 0) +
+                    (1 if user.last_name else 0) +
+                    (1 if user.email else 0) +
+                    (1 if user.age else 0) +
+                    (1 if user.bio else 0)
+                ) * 20 %}
+                <div class="progress mb-2" style="height: 20px;">
+                    <div class="progress-bar" role="progressbar" style="width: {{ completion }}%" 
+                         aria-valuenow="{{ completion }}" aria-valuemin="0" aria-valuemax="100">
+                        {{ completion }}%
+                    </div>
+                </div>
+                <small class="text-muted">
+                    {% if completion == 100 %}
+                        <i class="fas fa-check-circle text-success"></i> Your profile is complete!
+                    {% else %}
+                        <i class="fas fa-info-circle text-warning"></i> 
+                        {% if not user.bio %}Add a bio to complete your profile.{% endif %}
+                    {% endif %}
+                </small>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
